@@ -4,6 +4,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import ProductsOverView from '../screen/ProductsOverviewScreen';
 import { COLORS } from '../constants/colors';
+import ProductDetails from '../screen/ProductDetailsScreen';
 
 const Stack = createStackNavigator();
 const ShopNavigator = () => {
@@ -17,6 +18,7 @@ const ShopNavigator = () => {
         <NavigationContainer>
             <Stack.Navigator screenOptions={NavigationOptions}>
                 <Stack.Screen name="Products" component={ProductsOverView} />
+                <Stack.Screen name="ProductDetails" component={ProductDetails} options={({ route }) => ({ title: route.params.title })} />
             </Stack.Navigator>
         </NavigationContainer>
     );
