@@ -11,7 +11,7 @@ const ProductsOverView = (props) => {
                 image={itemData.item.imageUrl}
                 title={itemData.item.title}
                 price={itemData.item.price}
-                onSelect={() => { props.navigation.navigate("ProductDetails", { title: itemData.item.title }) }}
+                onSelect={() => { props.navigation.navigate("ProductDetails", { title: itemData.item.title, productId: itemData.item.id }) }}
             />
         )}
         />

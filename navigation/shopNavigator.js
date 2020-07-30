@@ -12,6 +12,12 @@ const ShopNavigator = () => {
         headerStyle: {
             backgroundColor: Platform.OS === 'android' ? COLORS.primary : 'white'
         },
+        headerTitleStyle: {
+            fontFamily: 'open-sans-bold'
+        },
+        headerBackTitleStyle: {
+            fontFamily: 'open-sans'
+        },
         headerTintColor: Platform.OS === 'android' ? 'white' : COLORS.primary
     };
     return (
