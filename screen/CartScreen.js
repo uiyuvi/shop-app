@@ -5,30 +5,35 @@ import { COLORS } from '../constants/colors';
 import { FlatList } from 'react-native-gesture-handler';
 import CartItem from '../components/CartItem';
 import * as cartActions from '../redux/actions/cart'
+import { addOrder } from '../redux/actions/orders';
 
 const CartScreen = () => {
-    const { totalPrice } = useSelector(state => state.cart);
+    const { totalPrice, products } = useSelector(state => state.cart);
     const dispatch = useDispatch();
-    const items = useSelector(state => {
-        const tranformedItems = [];
-        for (const key in state.cart.items) {
-            tranformedItems.push({
+    const tranformedProducts = useSelector(state => {
+        const tranformedProducts = [];
+        for (const key in state.cart.products) {
+            tranformedProducts.push({
                 id: key,
-                productTitle: state.cart.items[key].title,
-                productPrice: state.cart.items[key].price,
-                quantity: state.cart.items[key].quantity,
-                sum: state.cart.items[key].sum
+                productTitle: state.cart.products[key].title,
+                productPrice: state.cart.products[key].price,
+                quantity: state.cart.products[key].quantity,
+                sum: state.cart.products[key].sum
             })
         }
-        return tranformedItems;
+        return tranformedProducts;
     })
     return (
         <View style={styles.screen}>
             <View style={styles.summary}>
                 <Text style={styles.summaryText}>Total: <Text style={styles.price}>$ {totalPrice}</Text></Text>
-                <Button color={COLORS.accent} title="Order now" disabled={items.length === 0} />
+                <Button color={COLORS.accent}
+                    title="Order now"
+                    disabled={products.length === 0}
+                    onPress={() => dispatch(addOrder(products, totalPrice))}
+                />
             </View>
-            <FlatList data={items} renderItem={(itemData) => (
+            <FlatList data={tranformedProducts} renderItem={(itemData) => (
                 <CartItem
                     quantity={itemData.item.quantity}
                     title={itemData.item.productTitle}

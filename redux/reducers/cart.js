@@ -1,8 +1,9 @@
 import { ADD_TO_CART, REMOVE_FROM_CART } from "../actions/cart";
 import CartItem from "../../models/cart-item";
+import { ADD_ORDER } from "../actions/orders";
 
 const initialState = {
-    items: {},
+    products: {},
     totalPrice: 0
 }
 const cartReducer = (state = initialState, action) => {
@@ -11,26 +12,26 @@ const cartReducer = (state = initialState, action) => {
         const { price: productPrice, title: productTitle } = product;
         let updatedCart = { ...state };
         let productAboutToAdd;
-        if (state.items[product.id]) {
+        if (state.products[product.id]) {
             productAboutToAdd = new CartItem(
-                state.items[product.id].quantity + 1,
+                state.products[product.id].quantity + 1,
                 productPrice,
                 productTitle,
-                state.items[product.id].sum + productPrice
+                state.products[product.id].sum + productPrice
             );
         } else {
             productAboutToAdd = new CartItem(1, productPrice, productTitle, productPrice)
         }
         updatedCart = {
             ...state,
-            items: { ...state.items, [product.id]: productAboutToAdd },
+            products: { ...state.products, [product.id]: productAboutToAdd },
             totalPrice: parseFloat((state.totalPrice + productPrice).toFixed(2))
         }
         return updatedCart;
     }
 
     if (action.type === REMOVE_FROM_CART) {
-        const productTobeRemoved = state.items[action.productId];
+        const productTobeRemoved = state.products[action.productId];
         let updatedCartItems;
         if (productTobeRemoved.quantity > 1 && action.quantity === 1) {
             let updatedItem = new CartItem(
@@ -39,9 +40,9 @@ const cartReducer = (state = initialState, action) => {
                 productTobeRemoved.title,
                 productTobeRemoved.sum - productTobeRemoved.price
             )
-            updatedCartItems = { ...state.items, [action.productId]: updatedItem }
+            updatedCartItems = { ...state.products, [action.productId]: updatedItem }
         } else {
-            updatedCartItems = { ...state.items }
+            updatedCartItems = { ...state.products }
             delete updatedCartItems[action.productId];
         }
         updatedCartItems = {
@@ -51,6 +52,11 @@ const cartReducer = (state = initialState, action) => {
         }
         return updatedCartItems;
     }
+
+    if (action.type === ADD_ORDER) {
+        return initialState;
+    }
+
     return state;
 };
 export default cartReducer;
