@@ -47,7 +47,7 @@ const cartReducer = (state = initialState, action) => {
         }
         updatedCartItems = {
             ...state,
-            items: updatedCartItems,
+            products: updatedCartItems,
             totalPrice: parseFloat((state.totalPrice - (productTobeRemoved.price * action.quantity)).toFixed(2))
         }
         return updatedCartItems;

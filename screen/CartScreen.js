@@ -22,14 +22,14 @@ const CartScreen = () => {
             })
         }
         return tranformedProducts;
-    })
+    });
     return (
         <View style={styles.screen}>
             <View style={styles.summary}>
                 <Text style={styles.summaryText}>Total: <Text style={styles.price}>$ {totalPrice}</Text></Text>
                 <Button color={COLORS.accent}
                     title="Order now"
-                    disabled={products.length === 0}
+                    disabled={tranformedProducts.length === 0}
                     onPress={() => dispatch(addOrder(products, totalPrice))}
                 />
             </View>
