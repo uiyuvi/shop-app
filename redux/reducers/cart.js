@@ -1,4 +1,4 @@
-import { ADD_TO_CART } from "../actions/cart";
+import { ADD_TO_CART, REMOVE_FROM_CART } from "../actions/cart";
 import CartItem from "../../models/cart-item";
 
 const initialState = {
@@ -27,6 +27,18 @@ const cartReducer = (state = initialState, action) => {
             totalPrice: state.totalPrice + productPrice
         }
         return updatedCart;
+    }
+
+    if(action.type === REMOVE_FROM_CART){
+        const productTobeRemoved = state.items[action.productId];
+        let updatedCartItems = {...state.items};
+        delete updatedCartItems[action.productId]
+        updatedCartItems = {
+            ...state,
+            items: updatedCartItems,
+            totalPrice: state.totalPrice - (productTobeRemoved.quantity * productTobeRemoved.price)
+        }
+        return updatedCartItems;
     }
     return state;
 };
