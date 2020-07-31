@@ -6,11 +6,20 @@ const CartItem = (props) => {
     return (
         <View style={styles.item}>
             <View style={styles.itemData}>
-                <Text style={styles.quantity}>{props.quantity}</Text>
+                <View style={styles.quantityContainer}>
+                    <TouchableOpacity style={styles.addItem} onPress={props.onRemoveSingleProduct}>
+                        <Ionicons name={Platform.OS === "android" ? 'md-remove-circle' : 'ios-remove-circle'} size={23} color={"#888"}></Ionicons>
+                    </TouchableOpacity>
+                    <Text style={styles.quantity}>{props.quantity}</Text>
+                    <TouchableOpacity style={styles.removeItem} onPress={props.onAdd}>
+                        <Ionicons name={Platform.OS === "android" ? 'md-add-circle' : 'ios-add-circle'} size={23} color={"#888"}></Ionicons>
+                    </TouchableOpacity>
+                </View>
+
                 <Text style={styles.title}>{props.title}</Text>
             </View>
             <View style={styles.itemData}>
-                <Text style={styles.price}>{props.price}</Text>
+                <Text style={styles.price}>$ {props.price}</Text>
                 <TouchableOpacity style={styles.removeItem} onPress={props.onRemove}>
                     <Ionicons name={Platform.OS === "android" ? 'md-trash' : 'ios-trash'} size={23} color={"red"}></Ionicons>
                 </TouchableOpacity>
@@ -31,11 +40,15 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center"
     },
+    quantityContainer: {
+        flexDirection: "row",
+        alignItems: "center",
+        marginRight: 10
+    },
     quantity: {
         fontFamily: 'open-sans-bold',
         color: '#888',
-        fontSize: 18,
-        marginRight:5
+        fontSize: 18
     },
     title: {
         fontFamily: 'open-sans',
@@ -45,7 +58,10 @@ const styles = StyleSheet.create({
         fontFamily: 'open-sans-bold',
         fontSize: 16
     },
+    addItem:{
+        marginRight: 10
+    },
     removeItem: {
-        marginLeft: 20
+        marginLeft: 10
     }
 })

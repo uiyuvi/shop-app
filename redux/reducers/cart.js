@@ -24,19 +24,30 @@ const cartReducer = (state = initialState, action) => {
         updatedCart = {
             ...state,
             items: { ...state.items, [product.id]: productAboutToAdd },
-            totalPrice: state.totalPrice + productPrice
+            totalPrice: parseFloat((state.totalPrice + productPrice).toFixed(2))
         }
         return updatedCart;
     }
 
-    if(action.type === REMOVE_FROM_CART){
+    if (action.type === REMOVE_FROM_CART) {
         const productTobeRemoved = state.items[action.productId];
-        let updatedCartItems = {...state.items};
-        delete updatedCartItems[action.productId]
+        let updatedCartItems;
+        if (productTobeRemoved.quantity > 1 && action.quantity === 1) {
+            let updatedItem = new CartItem(
+                productTobeRemoved.quantity - 1,
+                productTobeRemoved.price,
+                productTobeRemoved.title,
+                productTobeRemoved.sum - productTobeRemoved.price
+            )
+            updatedCartItems = { ...state.items, [action.productId]: updatedItem }
+        } else {
+            updatedCartItems = { ...state.items }
+            delete updatedCartItems[action.productId];
+        }
         updatedCartItems = {
             ...state,
             items: updatedCartItems,
-            totalPrice: state.totalPrice - (productTobeRemoved.quantity * productTobeRemoved.price)
+            totalPrice: parseFloat((state.totalPrice - (productTobeRemoved.price * action.quantity)).toFixed(2))
         }
         return updatedCartItems;
     }

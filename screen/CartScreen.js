@@ -25,7 +25,7 @@ const CartScreen = () => {
     return (
         <View style={styles.screen}>
             <View style={styles.summary}>
-                <Text style={styles.summaryText}>Total: <Text style={styles.price}>${totalPrice}</Text></Text>
+                <Text style={styles.summaryText}>Total: <Text style={styles.price}>$ {totalPrice}</Text></Text>
                 <Button color={COLORS.accent} title="Order now" disabled={items.length === 0} />
             </View>
             <FlatList data={items} renderItem={(itemData) => (
@@ -33,7 +33,19 @@ const CartScreen = () => {
                     quantity={itemData.item.quantity}
                     title={itemData.item.productTitle}
                     price={itemData.item.productPrice}
-                    onRemove={() => dispatch(cartActions.removeFromCart(itemData.item.id))}
+                    onRemove={() => dispatch(cartActions.removeFromCart(itemData.item.id, itemData.item.quantity))}
+                    onRemoveSingleProduct={() => dispatch(cartActions.removeFromCart(itemData.item.id, 1))}
+                    onAdd={
+                        () => {
+                            let itemToAdd = {
+                                id: itemData.item.id,
+                                price: itemData.item.productPrice,
+                                title: itemData.item.productTitle,
+                                sum: itemData.item.sum
+                            };
+                            dispatch(cartActions.addToCart(itemToAdd))
+                        }
+                    }
                 />
             )} />
         </View>
