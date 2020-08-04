@@ -21,7 +21,7 @@ const CartScreen = () => {
                 sum: state.cart.products[key].sum
             })
         }
-        return tranformedProducts;
+        return tranformedProducts.sort((a, b) => a.id > b.id ? 1 : -1);
     });
     return (
         <View style={styles.screen}>
@@ -30,11 +30,12 @@ const CartScreen = () => {
                 <Button color={COLORS.accent}
                     title="Order now"
                     disabled={tranformedProducts.length === 0}
-                    onPress={() => dispatch(addOrder(products, totalPrice))}
+                    onPress={() => dispatch(addOrder(tranformedProducts, totalPrice))}
                 />
             </View>
             <FlatList data={tranformedProducts} renderItem={(itemData) => (
                 <CartItem
+                    modifiable={true}
                     quantity={itemData.item.quantity}
                     title={itemData.item.productTitle}
                     price={itemData.item.productPrice}

@@ -22,7 +22,7 @@ const cartReducer = (state = initialState, action) => {
         } else {
             productAboutToAdd = new CartItem(1, productPrice, productTitle, productPrice)
         }
-        updatedCart = {
+        updatedCart = { 
             ...state,
             products: { ...state.products, [product.id]: productAboutToAdd },
             totalPrice: parseFloat((state.totalPrice + productPrice).toFixed(2))

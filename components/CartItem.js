@@ -3,8 +3,9 @@ import { View, StyleSheet, Text, TouchableOpacity, Platform } from 'react-native
 import { Ionicons } from '@expo/vector-icons';
 
 const CartItem = (props) => {
+    const itemStyle = props.modifiable ? [styles.item, styles.itemPadding] : styles.item;
     return (
-        <View style={styles.item}>
+        <View style={itemStyle}>
             <View style={styles.itemData}>
                 <View style={styles.quantityContainer}>
                     {props.modifiable && <TouchableOpacity style={styles.addItem} onPress={props.onRemoveSingleProduct}>
@@ -29,8 +30,10 @@ const CartItem = (props) => {
 }
 export default CartItem;
 const styles = StyleSheet.create({
+    itemPadding:{
+        padding: 20
+    },
     item: {
-        padding: 20,
         marginHorizontal: 10,
         flexDirection: "row",
         justifyContent: "space-between",

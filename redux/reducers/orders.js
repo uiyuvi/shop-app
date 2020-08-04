@@ -5,14 +5,18 @@ const initialState = {
     orders: []
 }
 export default (state = initialState, action) => {
-    if(action.type === ADD_ORDER){
-        let updatedOrder = new Order (
-            new Date.toString(),
+    if (action.type === ADD_ORDER) {
+        let updatedOrder = new Order(
+            new Date().toString(),
             action.products,
             action.price,
             new Date()
-        )
-        return updatedOrder;
+        );
+
+        return {
+            ...state,
+            orders: state.orders.concat(updatedOrder)
+        }
     }
-    return state;
+return state;
 }
