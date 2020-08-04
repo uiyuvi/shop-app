@@ -7,22 +7,22 @@ const CartItem = (props) => {
         <View style={styles.item}>
             <View style={styles.itemData}>
                 <View style={styles.quantityContainer}>
-                    <TouchableOpacity style={styles.addItem} onPress={props.onRemoveSingleProduct}>
+                    {props.modifiable && <TouchableOpacity style={styles.addItem} onPress={props.onRemoveSingleProduct}>
                         <Ionicons name={Platform.OS === "android" ? 'md-remove-circle' : 'ios-remove-circle'} size={23} color={"#888"}></Ionicons>
-                    </TouchableOpacity>
+                    </TouchableOpacity>}
                     <Text style={styles.quantity}>{props.quantity}</Text>
-                    <TouchableOpacity style={styles.removeItem} onPress={props.onAdd}>
+                    {props.modifiable && <TouchableOpacity style={styles.removeItem} onPress={props.onAdd}>
                         <Ionicons name={Platform.OS === "android" ? 'md-add-circle' : 'ios-add-circle'} size={23} color={"#888"}></Ionicons>
-                    </TouchableOpacity>
+                    </TouchableOpacity>}
                 </View>
 
                 <Text style={styles.title}>{props.title}</Text>
             </View>
             <View style={styles.itemData}>
                 <Text style={styles.price}>$ {props.price}</Text>
-                <TouchableOpacity style={styles.removeItem} onPress={props.onRemove}>
+                {props.modifiable && <TouchableOpacity style={styles.removeItem} onPress={props.onRemove}>
                     <Ionicons name={Platform.OS === "android" ? 'md-trash' : 'ios-trash'} size={23} color={"red"}></Ionicons>
-                </TouchableOpacity>
+                </TouchableOpacity>}
             </View>
         </View>
     )
@@ -58,7 +58,7 @@ const styles = StyleSheet.create({
         fontFamily: 'open-sans-bold',
         fontSize: 16
     },
-    addItem:{
+    addItem: {
         marginRight: 10
     },
     removeItem: {
