@@ -13,6 +13,7 @@ import CustomHeaderButton from '../components/HeaderButton';
 import CartScreen from '../screen/CartScreen';
 import OrderScreen from '../screen/OrderScreen';
 import { Ionicons } from '@expo/vector-icons';
+import UserProducts from '../screen/UserProductsScreen';
 
 const ProductsStack = createStackNavigator();
 const NavigationOptions = {
@@ -62,6 +63,20 @@ const OrdersNavigator = () => {
     )
 }
 
+const AdminStack = createStackNavigator();
+const AdminNavigator = () => {
+    return (
+        <AdminStack.Navigator screenOptions={NavigationOptions} >
+            <AdminStack.Screen name="orders" component={UserProducts} options={({ navigation }) => ({
+                title: "Your Products",
+                headerLeft: () => (<HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
+                    <Item title="cart" iconName={Platform.OS === 'android' ? 'md-menu' : 'ios-menu'} onPress={() => navigation.toggleDrawer()}></Item>
+                </HeaderButtons>)
+            })} />
+        </AdminStack.Navigator>
+    )
+}
+
 const Drawer = createDrawerNavigator();
 const ShopDrawer = () => {
     return (
@@ -73,7 +88,7 @@ const ShopDrawer = () => {
                 <Drawer.Screen name="products" component={ProductsNavigator} options={{
                     drawerLabel: 'Products',
                     drawerIcon: ({ focused }) => (
-                        <Ionicons name={Platform.OS === 'android' ? 'md-create' : 'ios-create'} size={23} color={focused ? COLORS.primary : 'black'} />
+                        <Ionicons name={Platform.OS === 'android' ? 'md-list' : 'ios-list'} size={23} color={focused ? COLORS.primary : 'black'} />
                     )
                 }}
                 />
@@ -82,6 +97,15 @@ const ShopDrawer = () => {
                     drawerIcon: ({ focused }) => (
                         <Ionicons
                             name={Platform.OS === 'android' ? 'md-cart' : 'ios-cart'}
+                            size={23}
+                            color={focused ? COLORS.primary : 'black'} />
+                    )
+                }} />
+                <Drawer.Screen name="admin" component={AdminNavigator} options={{
+                    title: 'Admin',
+                    drawerIcon: ({ focused }) => (
+                        <Ionicons
+                            name={Platform.OS === 'android' ? 'md-create' : 'ios-create'}
                             size={23}
                             color={focused ? COLORS.primary : 'black'} />
                     )
