@@ -39,7 +39,6 @@ const productsReducer = (state = initialState, action) => {
   }
 
   if(action.type === UPDATE_PRODUCT){
-    console.log(action);
     const userProductIndex = state.userProducts.findIndex(product => product.id === action.productId);
     const updatedProduct = new Product(
         action.productId,

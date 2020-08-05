@@ -23,14 +23,11 @@ const EditProduct = props => {
   const dispatch = useDispatch();
 
   const submitHandler = useCallback(() => {
-    if (productId) {
-        console.log("update", productId, title, description, imageUrl);
-        
+    if (productId) {        
       dispatch(
         ProductActions.updateProduct(productId, title, description, imageUrl)
       );
     } else {
-        console.log("add");
       dispatch(
         ProductActions.createProduct(title, description, imageUrl, +price)
       );
