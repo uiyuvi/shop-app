@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { Animated, Easing, View, Text, StyleSheet, Platform } from "react-native";
 import { COLORS } from "../constants/colors";
 import { Ionicons } from "@expo/vector-icons";
 import CartItem from "./CartItem";
+import { TouchableOpacity, TouchableNativeFeedback } from 'react-native';
 
 const getFormattedDate = rawDate => {
     let formattedDate =
@@ -10,19 +11,45 @@ const getFormattedDate = rawDate => {
     return formattedDate;
 };
 const OrderItem = props => {
+    let TouchableCmp = TouchableOpacity;
+    if (Platform.OS === "android" && Platform.Version >= 21) {
+        TouchableCmp = TouchableNativeFeedback
+    }
     const [showDetails, setShowDetails] = useState(false);
+    const logoStyles = [];
+    const animation = new Animated.Value(showDetails ? 0 : 1);
+
+    Animated.timing(animation, {
+        toValue: showDetails ? 1 : 0,
+        duration: 200,
+        useNativeDriver: true
+    }).start();
+
+    const rotateInterpolate = animation.interpolate({
+        inputRange: [0, 1],
+        outputRange: ['0deg', '180deg']
+    });
+    const animatedStyles = { transform: [{ rotate: rotateInterpolate }], top : showDetails ? -2 : 5 };
+    logoStyles.push(animatedStyles);
     return (
         <View style={styles.orderItem}>
             <View style={styles.summary}>
                 <Text style={styles.price}>${props.price.toFixed(2)}</Text>
                 <Text style={styles.date}>{getFormattedDate(props.date)}</Text>
             </View>
-            <Ionicons
-                name={showDetails ? "ios-arrow-dropup" : "ios-arrow-dropdown"}
-                size={23}
-                color={COLORS.primary}
-                onPress={() => setShowDetails(prevState => !prevState)}
-            />
+            <TouchableCmp 
+                onPress={() => setShowDetails(prevState => !prevState)}>
+                <View style={styles.detailsClickable}>
+                    <Text style={styles.detailsText}>{showDetails ? "Hide details" : "Show details"}</Text>
+                    <Animated.View style={logoStyles}>
+                        <Ionicons
+                            name={"ios-arrow-down"}
+                            size={13}
+                            color={COLORS.primary}
+                        />
+                    </Animated.View>
+                </View>
+            </TouchableCmp>
             {
                 showDetails &&
                 <View style={styles.orderDetails}>
@@ -70,5 +97,13 @@ const styles = StyleSheet.create({
     },
     orderDetails: {
         width: "100%"
+    },
+    detailsClickable: {
+        flexDirection: "row",
+        justifyContent: "center"
+    },
+    detailsText: {
+        paddingRight: 5,
+        color: COLORS.primary
     }
 });
