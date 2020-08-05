@@ -4,12 +4,15 @@ import { useSelector, useDispatch } from "react-redux";
 import ProductItem from "../components/ProductItem";
 import * as cartActions from "../redux/actions/cart";
 import { COLORS } from "../constants/colors";
-import { deleteProduct } from "../redux/actions/products";
+import {deleteProduct} from "../redux/actions/products";
 
 const UserProducts = props => {
   const userProducts = useSelector(state => state.products.userProducts);
   const dispatch = useDispatch();
-  const onSelectHandler = () => {};
+  const onSelectHandler = id => {
+    props.navigation.navigate("editProduct", { productId: id });
+  };
+  
   return (
     <FlatList
       data={userProducts}
@@ -18,15 +21,21 @@ const UserProducts = props => {
           image={itemData.item.imageUrl}
           title={itemData.item.title}
           price={itemData.item.price}
-          onSelect={() =>
-            onSelectHandler(itemData.item.title, itemData.item.id)
-          }
+          onSelect={() => {}}
           addToCart={() => dispatch(cartActions.addToCart(itemData.item))}
         >
-          <Button color={COLORS.primary} title="Edit" onPress={() => {}} />
-          <Button color={COLORS.primary} title="Delete" onPress={() => {
-            dispatch(deleteProduct(itemData.item.id))
-          }} />
+          <Button
+            color={COLORS.primary}
+            title="Edit"
+            onPress={() => onSelectHandler(itemData.item.id)}
+          />
+          <Button
+            color={COLORS.primary}
+            title="Delete"
+            onPress={() => {
+              dispatch(deleteProduct(itemData.item.id));
+            }}
+          />
         </ProductItem>
       )}
     />

@@ -14,6 +14,7 @@ import CartScreen from '../screen/CartScreen';
 import OrderScreen from '../screen/OrderScreen';
 import { Ionicons } from '@expo/vector-icons';
 import UserProducts from '../screen/UserProductsScreen';
+import EditProduct from '../screen/EditProductScreen';
 
 const ProductsStack = createStackNavigator();
 const NavigationOptions = {
@@ -71,7 +72,13 @@ const AdminNavigator = () => {
                 title: "Your Products",
                 headerLeft: () => (<HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
                     <Item title="cart" iconName={Platform.OS === 'android' ? 'md-menu' : 'ios-menu'} onPress={() => navigation.toggleDrawer()}></Item>
+                </HeaderButtons>),
+                headerRight: () => (<HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
+                    <Item title="cart" iconName={Platform.OS === 'android' ? 'md-add' : 'ios-add'} onPress={() => navigation.navigate("editProduct")}></Item>
                 </HeaderButtons>)
+            })} />
+            <AdminStack.Screen name="editProduct" component={EditProduct} options={({ route }) => ({
+                title: route.params && route.params.productId ? "Edit Product" : "Add Product"                
             })} />
         </AdminStack.Navigator>
     )
