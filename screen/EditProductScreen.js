@@ -32,6 +32,7 @@ const EditProduct = props => {
         ProductActions.createProduct(title, description, imageUrl, +price)
       );
     }
+    props.navigation.goBack()
   }, [dispatch, productId, title, description, imageUrl, price]);
   React.useLayoutEffect(() => {
     props.navigation.setOptions({
