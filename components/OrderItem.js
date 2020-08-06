@@ -4,6 +4,7 @@ import { COLORS } from "../constants/colors";
 import { Ionicons } from "@expo/vector-icons";
 import CartItem from "./CartItem";
 import { TouchableOpacity, TouchableNativeFeedback } from 'react-native';
+import Card from "./Card";
 
 const getFormattedDate = rawDate => {
     let formattedDate =
@@ -32,7 +33,7 @@ const OrderItem = props => {
     const animatedStyles = { transform: [{ rotate: rotateInterpolate }], top : showDetails ? -2 : 5 };
     logoStyles.push(animatedStyles);
     return (
-        <View style={styles.orderItem}>
+        <Card style={styles.orderItem}>
             <View style={styles.summary}>
                 <Text style={styles.price}>${props.price.toFixed(2)}</Text>
                 <Text style={styles.date}>{getFormattedDate(props.date)}</Text>
@@ -60,7 +61,7 @@ const OrderItem = props => {
                     }
                 </View>
             }
-        </View>
+        </Card>
     );
 };
 
@@ -68,13 +69,6 @@ export default OrderItem;
 
 const styles = StyleSheet.create({
     orderItem: {
-        backgroundColor: "white",
-        shadowColor: "black",
-        shadowOpacity: 0.26,
-        shadowOffset: { width: 0, height: 2 },
-        shadowRadius: 8,
-        borderRadius: 10,
-        elevation: 7,
         alignItems: "center",
         margin: 20,
         padding: 10
