@@ -46,7 +46,7 @@ const styles = StyleSheet.create({
     width: "100%"
   },
   details: {
-    height: "15%",
+    height: "20%",
     padding: 10,
     alignItems: "center"
   },
@@ -61,7 +61,7 @@ const styles = StyleSheet.create({
     fontFamily: "open-sans"
   },
   actionContianer: {
-    height: "25%",
+    height: "20%",
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
