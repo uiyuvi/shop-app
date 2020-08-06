@@ -73,7 +73,6 @@ const cartReducer = (state = initialState, action) => {
 
     let updatedProducts = { ...state.products };
     let itemToBeRemovedSum = 0;
-    console.log(state.products[action.pid]);
 
     itemToBeRemovedSum = state.products[action.pid].sum;
     delete updatedProducts[action.pid];

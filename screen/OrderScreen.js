@@ -8,8 +8,7 @@ const OrderScreen = () => {
     return (
         <FlatList
          data={orders}  
-         renderItem = {itemData => {console.log(itemData.item);
-         return <OrderItem price={itemData.item.price} date={itemData.item.date} products={itemData.item.products}/>}}
+         renderItem = {itemData => <OrderItem price={itemData.item.price} date={itemData.item.date} products={itemData.item.products}/>}
         />
     )
 };
