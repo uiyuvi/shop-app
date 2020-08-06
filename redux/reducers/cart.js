@@ -1,7 +1,7 @@
 import { ADD_TO_CART, REMOVE_FROM_CART } from "../actions/cart";
 import CartItem from "../../models/cart-item";
 import { ADD_ORDER } from "../actions/orders";
-import { DELETE_PRODUCT } from "../actions/products";
+import { DELETE_PRODUCT, UPDATE_PRODUCT } from "../actions/products";
 
 const initialState = {
   products: {},
@@ -70,7 +70,6 @@ const cartReducer = (state = initialState, action) => {
     if (!state.products[action.pid]) {
       return state;
     }
-    console.log("deleteproduct");
 
     let updatedProducts = { ...state.products };
     let itemToBeRemovedSum = 0;
@@ -79,13 +78,30 @@ const cartReducer = (state = initialState, action) => {
     itemToBeRemovedSum = state.products[action.pid].sum;
     delete updatedProducts[action.pid];
 
-    console.log(updatedProducts);
-
     return {
       ...state,
       products: updatedProducts,
       totalPrice: parseFloat((state.totalPrice - itemToBeRemovedSum).toFixed(2))
     };
+  }
+
+  if (action.type === UPDATE_PRODUCT) {
+    if (!state.products[action.productId]) {
+      return state;
+    }
+    let updatedCart = { ...state };
+    let updatedProduct;
+    updatedProduct = new CartItem(
+      state.products[action.productId].quantity,
+      state.products[action.productId].price,
+      action.productData.title,
+      state.products[action.productId].sum
+    );
+    updatedCart = {
+      ...state,
+      products: { ...state.products, [action.productId]: updatedProduct }
+    };
+    return updatedCart;
   }
 
   return state;
