@@ -1,17 +1,11 @@
 import React, { useCallback, useReducer } from "react";
-import {
-  Platform,
-  View,
-  Text,
-  StyleSheet,
-  TextInput,
-  Alert
-} from "react-native";
+import { Platform, View, StyleSheet, Alert } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import * as ProductActions from "../redux/actions/products";
 import { HeaderButtons, Item } from "react-navigation-header-buttons";
 import CustomHeaderButton from "../components/HeaderButton";
 import { useSelector, useDispatch } from "react-redux";
+import Input from "../components/Input";
 
 const FORM_INPUT_UPDATE = "FORM_INPUT_UPDATE";
 
@@ -107,12 +101,7 @@ const EditProduct = props => {
   }, [submitHandler]);
 
   const inputHandler = useCallback(
-    (id, inputValue) => {
-      let inputIsValid = true;
-      if (inputValue.trim().length === 0) {
-        inputIsValid = false;
-      }
-
+    (id, inputValue, inputIsValid) => {
       formDispatch({
         type: FORM_INPUT_UPDATE,
         inputData: {
@@ -128,41 +117,47 @@ const EditProduct = props => {
   return (
     <ScrollView>
       <View style={styles.form}>
-        <View style={styles.formControl}>
-          <Text style={styles.label}>Title</Text>
-          <TextInput
-            style={styles.input}
-            value={title}
-            onChangeText={text => inputHandler("title", text)}
-          />
-          {!formState.inputValidities.title && <Text>Please enter Title</Text>}
-        </View>
-        <View style={styles.formControl}>
-          <Text style={styles.label}>ImageUrl</Text>
-          <TextInput
-            style={styles.input}
-            value={imageUrl}
-            onChangeText={text => inputHandler("imageUrl", text)}
-          />
-        </View>
+        <Input
+          id="title"
+          label="Title"
+          keyboardType="default"
+          required
+          onChangeText={inputHandler}
+          errorText="Please enter Title"
+          initialValue={product ? product.title : ""}
+          initiallyValid={product ? true: false}
+        />
+        <Input
+          id="imageUrl"
+          label="ImageUrl"
+          keyboardType="default"
+          required
+          onChangeText={inputHandler}
+          errorText="Please enter imageUrl"
+          initialValue={product ? product.imageUrl : ""}
+          initiallyValid={product ? true: false}
+        />
         {!product && (
-          <View style={styles.formControl}>
-            <Text style={styles.label}>Amount</Text>
-            <TextInput
-              style={styles.input}
-              value={price}
-              onChangeText={text => inputHandler("price", text)}
-            />
-          </View>
-        )}
-        <View style={styles.formControl}>
-          <Text style={styles.label}>Description</Text>
-          <TextInput
-            style={styles.input}
-            value={description}
-            onChangeText={text => inputHandler("description", text)}
+          <Input
+            id="price"
+            label="Amount"
+            keyboardType="decimal-pad"
+            required
+            onChangeText={inputHandler}
+            errorText="Please enter valid amount"
+            min="0"
           />
-        </View>
+        )}
+        <Input
+          id="description"
+          label="Description"
+          keyboardType="default"
+          required
+          onChangeText={inputHandler}
+          errorText="Please enter description"
+          initialValue={product ? product.description : ""}
+          initiallyValid={product ? true: false}
+        />
       </View>
     </ScrollView>
   );
