@@ -125,7 +125,7 @@ const EditProduct = props => {
           onChangeText={inputHandler}
           errorText="Please enter Title"
           initialValue={product ? product.title : ""}
-          initiallyValid={product ? true: false}
+          initiallyValid={!!product}
         />
         <Input
           id="imageUrl"
@@ -135,7 +135,7 @@ const EditProduct = props => {
           onChangeText={inputHandler}
           errorText="Please enter imageUrl"
           initialValue={product ? product.imageUrl : ""}
-          initiallyValid={product ? true: false}
+          initiallyValid={!!product}
         />
         {!product && (
           <Input
@@ -145,7 +145,7 @@ const EditProduct = props => {
             required
             onChangeText={inputHandler}
             errorText="Please enter valid amount"
-            min="0"
+            min={0.1}
           />
         )}
         <Input
@@ -156,7 +156,8 @@ const EditProduct = props => {
           onChangeText={inputHandler}
           errorText="Please enter description"
           initialValue={product ? product.description : ""}
-          initiallyValid={product ? true: false}
+          initiallyValid={!!product}
+          minLength={5}
         />
       </View>
     </ScrollView>

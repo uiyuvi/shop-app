@@ -24,9 +24,18 @@ const Input = props => {
     isValid: props.initiallyValid,
     touched: false
   });
-  const inputHandler = (inputType, inputValue) => {
+  const inputHandler = inputValue => {
     let isValid = true;
     if (props.required && inputValue.trim().length === 0) {
+      isValid = false;
+    }
+    if (props.min !== null && +inputValue < props.min) {
+      isValid = false;
+    }
+    if (
+      props.minLength !== null &&
+      inputValue.trim().length < props.minLength
+    ) {
       isValid = false;
     }
     dispatch({
@@ -41,8 +50,10 @@ const Input = props => {
     });
   };
   useEffect(() => {
-    props.onChangeText(props.id, inputState.value, inputState.isValid);
-  }, [props.id, inputState.value, inputState.isValid]);
+    if (inputState.touched) {
+      props.onChangeText(props.id, inputState.value, inputState.isValid);
+    }
+  }, [props.id, props.onChangeText, inputState]);
 
   return (
     <View style={styles.inputContainer}>
@@ -51,11 +62,13 @@ const Input = props => {
         {...props}
         style={styles.input}
         value={inputState.value}
-        onChangeText={text => inputHandler(props.id, text)}
+        onChangeText={text => inputHandler(text)}
         onBlur={onBlurHandler}
       />
-      {inputState.touched && !inputState.isValid && (
-        <Text>{props.errorText}</Text>
+      {!inputState.isValid && inputState.touched && (
+        <View style={styles.errorContainer}>
+          <Text style={styles.errorText}>{props.errorText}</Text>
+        </View>
       )}
     </View>
   );
@@ -76,5 +89,13 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
     borderBottomColor: "#CCC",
     borderBottomWidth: 1
+  },
+  errorContainer: {
+    marginVertical: 5
+  },
+  errorText: {
+    color: "red",
+    fontFamily: "open-sans",
+    fontSize: 14
   }
 });
