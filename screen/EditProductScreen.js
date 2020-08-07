@@ -1,5 +1,11 @@
 import React, { useCallback, useReducer } from "react";
-import { Platform, View, StyleSheet, Alert } from "react-native";
+import {
+  Platform,
+  View,
+  StyleSheet,
+  Alert,
+  KeyboardAvoidingView
+} from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import * as ProductActions from "../redux/actions/products";
 import { HeaderButtons, Item } from "react-navigation-header-buttons";
@@ -115,52 +121,54 @@ const EditProduct = props => {
   );
 
   return (
-    <ScrollView>
-      <View style={styles.form}>
-        <Input
-          id="title"
-          label="Title"
-          keyboardType="default"
-          required
-          onChangeText={inputHandler}
-          errorText="Please enter Title"
-          initialValue={product ? product.title : ""}
-          initiallyValid={!!product}
-        />
-        <Input
-          id="imageUrl"
-          label="ImageUrl"
-          keyboardType="default"
-          required
-          onChangeText={inputHandler}
-          errorText="Please enter imageUrl"
-          initialValue={product ? product.imageUrl : ""}
-          initiallyValid={!!product}
-        />
-        {!product && (
+    <KeyboardAvoidingView behavior="padding" keyboardVerticalOffset={100}>
+      <ScrollView>
+        <View style={styles.form}>
           <Input
-            id="price"
-            label="Amount"
-            keyboardType="decimal-pad"
+            id="title"
+            label="Title"
+            keyboardType="default"
             required
             onChangeText={inputHandler}
-            errorText="Please enter valid amount"
-            min={0.1}
+            errorText="Please enter Title"
+            initialValue={product ? product.title : ""}
+            initiallyValid={!!product}
           />
-        )}
-        <Input
-          id="description"
-          label="Description"
-          keyboardType="default"
-          required
-          onChangeText={inputHandler}
-          errorText="Please enter description"
-          initialValue={product ? product.description : ""}
-          initiallyValid={!!product}
-          minLength={5}
-        />
-      </View>
-    </ScrollView>
+          <Input
+            id="imageUrl"
+            label="ImageUrl"
+            keyboardType="default"
+            required
+            onChangeText={inputHandler}
+            errorText="Please enter imageUrl"
+            initialValue={product ? product.imageUrl : ""}
+            initiallyValid={!!product}
+          />
+          {!product && (
+            <Input
+              id="price"
+              label="Amount"
+              keyboardType="decimal-pad"
+              required
+              onChangeText={inputHandler}
+              errorText="Please enter valid amount"
+              min={0.1}
+            />
+          )}
+          <Input
+            id="description"
+            label="Description"
+            keyboardType="default"
+            required
+            onChangeText={inputHandler}
+            errorText="Please enter description"
+            initialValue={product ? product.description : ""}
+            initiallyValid={!!product}
+            minLength={5}
+          />
+        </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 };
 
