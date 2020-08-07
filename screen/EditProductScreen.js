@@ -69,23 +69,29 @@ const EditProduct = props => {
 
   const dispatch = useDispatch();
 
-  const submitHandler = useCallback(() => {
+  const submitHandler = useCallback(async() => {
     if (!formState.formIsValid) {
       Alert.alert("Invalid input", "Please provide valid values", [
         { text: "ok" }
       ]);
       return;
     }
-    if (productId) {
-      dispatch(
-        ProductActions.updateProduct(productId, title, description, imageUrl)
-      );
-    } else {
-      dispatch(
-        ProductActions.createProduct(title, description, imageUrl, +price)
-      );
+    try{
+      if (productId) {
+        await dispatch(
+          ProductActions.updateProduct(productId, title, description, imageUrl)
+        );
+      } else {
+        await dispatch(
+          ProductActions.createProduct(title, description, imageUrl, +price)
+        );
+      }
+      props.navigation.goBack();
+    } catch (error){
+      Alert.alert("oops", error.message, [
+        { text: "ok" }
+      ]);
     }
-    props.navigation.goBack();
   }, [dispatch, productId, title, description, imageUrl, price]);
 
   React.useLayoutEffect(() => {
