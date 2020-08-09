@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, Text, Button, StyleSheet } from "react-native";
+import React, { useState } from 'react';
+import { View, Text, Button, StyleSheet, ActivityIndicator } from "react-native";
 import { useSelector, useDispatch } from 'react-redux';
 import { COLORS } from '../constants/colors';
 import { FlatList } from 'react-native-gesture-handler';
@@ -9,6 +9,7 @@ import { addOrder } from '../redux/actions/orders';
 import Card from '../components/Card';
 
 const CartScreen = () => {
+    const [isLoading, setIsLoading] = useState(false);
     const { totalPrice, products } = useSelector(state => state.cart);
     const dispatch = useDispatch();
     const tranformedProducts = useSelector(state => {
@@ -24,15 +25,22 @@ const CartScreen = () => {
         }
         return tranformedProducts.sort((a, b) => a.id > b.id ? 1 : -1);
     });
+    const onOrderHandler = async () => {
+        setIsLoading(true);
+        await dispatch(addOrder(tranformedProducts, totalPrice))
+        setIsLoading(false);
+    }
     return (
         <View style={styles.screen}>
             <Card style={styles.summary}>
                 <Text style={styles.summaryText}>Total: <Text style={styles.price}>$ {totalPrice}</Text></Text>
-                <Button color={COLORS.accent}
-                    title="Order now"
-                    disabled={tranformedProducts.length === 0}
-                    onPress={() => dispatch(addOrder(tranformedProducts, totalPrice))}
-                />
+                {isLoading ? <ActivityIndicator size="small" color={COLORS.primary} /> :
+                    <Button color={COLORS.accent}
+                        title="Order now"
+                        disabled={tranformedProducts.length === 0}
+                        onPress={onOrderHandler}
+                    />
+                }
             </Card>
             <FlatList data={tranformedProducts} renderItem={(itemData) => (
                 <CartItem
@@ -42,17 +50,15 @@ const CartScreen = () => {
                     price={itemData.item.productPrice}
                     onRemove={() => dispatch(cartActions.removeFromCart(itemData.item.id, itemData.item.quantity))}
                     onRemoveSingleProduct={() => dispatch(cartActions.removeFromCart(itemData.item.id, 1))}
-                    onAdd={
-                        () => {
-                            let itemToAdd = {
-                                id: itemData.item.id,
-                                price: itemData.item.productPrice,
-                                title: itemData.item.productTitle,
-                                sum: itemData.item.sum
-                            };
-                            dispatch(cartActions.addToCart(itemToAdd))
-                        }
-                    }
+                    onAdd={() => {
+                        let itemToAdd = {
+                            id: itemData.item.id,
+                            price: itemData.item.productPrice,
+                            title: itemData.item.productTitle,
+                            sum: itemData.item.sum
+                        };
+                        dispatch(cartActions.addToCart(itemToAdd));
+                    }}
                 />
             )} />
         </View>
@@ -69,7 +75,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "space-between",
         marginBottom: 20,
-        padding: 20        
+        padding: 20
     },
     summaryText: {
         fontFamily: 'open-sans-bold',
