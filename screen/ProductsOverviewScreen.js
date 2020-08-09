@@ -1,5 +1,5 @@
-import React, { useEffect, useCallback } from "react";
-import { Button, FlatList } from "react-native";
+import React, { useEffect, useCallback, useState } from "react";
+import { Button, FlatList, ActivityIndicator, View, Text, StyleSheet } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import ProductItem from "../components/ProductItem";
 import * as cartActions from "../redux/actions/cart";
@@ -7,23 +7,39 @@ import { COLORS } from "../constants/colors";
 import { getProduct } from "../redux/actions/products";
 
 const ProductsOverView = props => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [error, setError] = useState();
   const availableProducts = useSelector(
     state => state.products.availableProducts
   );
   const dispatch = useDispatch();
-  const loadProducts = useCallback(() => {
-    dispatch(getProduct());
+  const loadProducts = useCallback(async () => {
+    setError(null);
+    setIsRefreshing(true);
+    try {
+      await dispatch(getProduct());
+    } catch (error) {
+      setError(error.message)
+    }
+    setIsRefreshing(false);
   }, [dispatch]);
-  
+
   useEffect(() => {
     const unsubscribe = props.navigation.addListener("focus", () => {
-      loadProducts();
+      setIsLoading(true);
+      loadProducts().then(()=>{
+        setIsLoading(false);
+      });
     });
     return unsubscribe;
   }, [loadProducts]);
 
   useEffect(() => {
-    loadProducts();
+    setIsLoading(true);
+    loadProducts().then(()=>{
+      setIsLoading(false);
+    });
   }, [loadProducts]);
   const onSelectHandler = (title, id) => {
     props.navigation.navigate("ProductDetails", {
@@ -31,8 +47,16 @@ const ProductsOverView = props => {
       productId: id
     });
   };
+  if (isLoading) {
+    return <ActivityIndicator size="large" color={COLORS.primary} />
+  }
+  if (error) {
+    return <View style={styles.container}><Text style={styles.errorText}>{error}</Text></View>
+  }
   return (
     <FlatList
+      refreshing={isRefreshing}
+      onRefresh={loadProducts}
       data={availableProducts}
       renderItem={itemData => (
         <ProductItem
@@ -62,3 +86,15 @@ const ProductsOverView = props => {
 };
 
 export default ProductsOverView;
+
+const styles = StyleSheet.create({
+  container:{
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center"
+  },
+  errorText: {
+    fontFamily: "open-sans",
+    fontSize: 16
+  }
+})
