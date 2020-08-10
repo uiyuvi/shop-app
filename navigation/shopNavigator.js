@@ -1,5 +1,5 @@
-import React from 'react';
-import { Platform, Text } from 'react-native';
+import React, { useReducer } from 'react';
+import { Platform } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import {
@@ -15,6 +15,8 @@ import OrderScreen from '../screen/OrderScreen';
 import { Ionicons } from '@expo/vector-icons';
 import UserProducts from '../screen/UserProductsScreen';
 import EditProduct from '../screen/EditProductScreen';
+import HomeScreen from '../screen/HomeScreen';
+import { useSelector } from 'react-redux';
 
 const ProductsStack = createStackNavigator();
 const NavigationOptions = {
@@ -78,48 +80,74 @@ const AdminNavigator = () => {
                 </HeaderButtons>)
             })} />
             <AdminStack.Screen name="editProduct" component={EditProduct} options={({ route }) => ({
-                title: route.params && route.params.productId ? "Edit Product" : "Add Product"                
+                title: route.params && route.params.productId ? "Edit Product" : "Add Product"
             })} />
         </AdminStack.Navigator>
     )
 }
 
 const Drawer = createDrawerNavigator();
-const ShopDrawer = () => {
+const ShopAuthenticatedNavigator = () => {
     return (
-        <NavigationContainer>
-            <Drawer.Navigator
-                drawerContentOptions={{
-                    activeTintColor: COLORS.primary
-                }}>
-                <Drawer.Screen name="products" component={ProductsNavigator} options={{
-                    drawerLabel: 'Products',
-                    drawerIcon: ({ focused }) => (
-                        <Ionicons name={Platform.OS === 'android' ? 'md-list' : 'ios-list'} size={23} color={focused ? COLORS.primary : 'black'} />
+        <Drawer.Navigator
+            drawerContentOptions={{
+                activeTintColor: COLORS.primary
+            }}>
+            <Drawer.Screen name="products" component={ProductsNavigator} options={{
+                drawerLabel: 'Products',
+                drawerIcon: ({ focused }) => (
+                    <Ionicons name={Platform.OS === 'android' ? 'md-list' : 'ios-list'} size={23} color={focused ? COLORS.primary : 'black'} />
+                )
+            }}
+            />
+            <Drawer.Screen name="orders" component={OrdersNavigator} options={{
+                title: 'Orders',
+                drawerIcon: ({ focused }) => (
+                    <Ionicons
+                        name={Platform.OS === 'android' ? 'md-cart' : 'ios-cart'}
+                        size={23}
+                        color={focused ? COLORS.primary : 'black'} />
+                )
+            }} />
+            <Drawer.Screen name="admin" component={AdminNavigator} options={{
+                title: 'Admin',
+                drawerIcon: ({ focused }) => (
+                    <Ionicons
+                        name={Platform.OS === 'android' ? 'md-create' : 'ios-create'}
+                        size={23}
+                        color={focused ? COLORS.primary : 'black'} />
+                )
+            }} />
+        </Drawer.Navigator>
+    )
+};
+
+const UnAuthStack = createStackNavigator();
+const ShopUnAuthenticatedNavigator = () => {
+    return (
+        <UnAuthStack.Navigator screenOptions={NavigationOptions}>
+            <UnAuthStack.Screen name="login" component={HomeScreen} />
+        </UnAuthStack.Navigator>
+    )
+};
+
+const ShopStack = createStackNavigator();
+const ShopNavigator = () => {
+    const { isLoggedIn } = useSelector(state => state.auth);
+    return (
+        < NavigationContainer >
+            {
+                !isLoggedIn ?
+                    (
+                        <ShopStack.Navigator screenOptions={NavigationOptions}>
+                            <ShopStack.Screen name="unauthenticated" component={ShopUnAuthenticatedNavigator} options={{title:"Shop"}}/>
+                        </ShopStack.Navigator>
+                    ) : (
+                        ShopAuthenticatedNavigator()
                     )
-                }}
-                />
-                <Drawer.Screen name="orders" component={OrdersNavigator} options={{
-                    title: 'Orders',
-                    drawerIcon: ({ focused }) => (
-                        <Ionicons
-                            name={Platform.OS === 'android' ? 'md-cart' : 'ios-cart'}
-                            size={23}
-                            color={focused ? COLORS.primary : 'black'} />
-                    )
-                }} />
-                <Drawer.Screen name="admin" component={AdminNavigator} options={{
-                    title: 'Admin',
-                    drawerIcon: ({ focused }) => (
-                        <Ionicons
-                            name={Platform.OS === 'android' ? 'md-create' : 'ios-create'}
-                            size={23}
-                            color={focused ? COLORS.primary : 'black'} />
-                    )
-                }} />
-            </Drawer.Navigator>
-        </NavigationContainer>
+            }
+        </NavigationContainer >
     )
 }
 
-export default ShopDrawer;
+export default ShopNavigator;
