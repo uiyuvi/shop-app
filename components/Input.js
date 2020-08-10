@@ -38,6 +38,12 @@ const Input = props => {
     ) {
       isValid = false;
     }
+    if (
+      props.email &&
+      !(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(inputValue.trim()))
+    ) {
+      isValid = false
+    }
     dispatch({
       type: INPUT_CHANGE,
       inputValue,

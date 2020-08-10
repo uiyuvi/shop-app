@@ -94,7 +94,7 @@ const HomeScreen = () => {
                             email
                             required
                             onChangeText={inputHandler}
-                            errorText="Please enter username"
+                            errorText="Please enter valid username"
                             initialValue={""}
                             initiallyValid={false}
                         />
@@ -105,7 +105,7 @@ const HomeScreen = () => {
                             keyboardType="default"
                             required
                             onChangeText={inputHandler}
-                            errorText="Please enter password"
+                            errorText="Please enter valid password"
                             initialValue={""}
                             initiallyValid={false}
                         />
