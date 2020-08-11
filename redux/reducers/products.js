@@ -1,4 +1,3 @@
-import PRODUCTS from "../../data/dummy-data";
 import {
   DELETE_PRODUCT,
   CREATE_PRODUCT,
@@ -8,28 +7,15 @@ import {
 import Product from "../../models/product";
 
 const initialState = {
-  availableProducts: PRODUCTS,
-  userProducts: PRODUCTS.filter(product => product.userId === "u1")
+  availableProducts: [],
+  userProducts: []
 };
 
 const productsReducer = (state = initialState, action) => {
   if (action.type === SET_PRODUCT) {
-    const updatedProducts = [];
-    for (const [key, value] of Object.entries(action.products)) {
-      const newProduct = new Product(
-        key,
-        "u1",
-        value.title,
-        value.imageUrl,
-        value.description,
-        value.price
-      );
-      updatedProducts.push(newProduct);
-    }
-
     return {
-      availableProducts: updatedProducts,
-      userProducts: updatedProducts.filter(product => product.userId === "u1")
+      availableProducts: action.availableProducts,
+      userProducts: action.userProducts
     };
   }
 
@@ -50,7 +36,7 @@ const productsReducer = (state = initialState, action) => {
   if (action.type === CREATE_PRODUCT) {
     const newProduct = new Product(
       action.productData.id,
-      "u1",
+      action.productData.ownerId,
       action.productData.title,
       action.productData.imageUrl,
       action.productData.description,

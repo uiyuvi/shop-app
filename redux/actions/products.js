@@ -1,3 +1,5 @@
+import Product from "../../models/product";
+
 export const DELETE_PRODUCT = "DELETE_PRODUCT";
 export const UPDATE_PRODUCT = "UPDATE_PRODUCT";
 export const CREATE_PRODUCT = "CREATE_PRODUCT";
@@ -8,11 +10,13 @@ export const deleteProduct = id => ({
   pid: id
 });
 
-export const createProduct = (title, imageUrl, description, price) => {
-  return async dispatch => {
+export const createProduct = (title, description, imageUrl, price) => {
+  return async (dispatch, getState) => {
+    const token = getState().auth.token
+    const userId = getState().auth.userId
     try {
       const response = await fetch(
-        "https://rn-shop-app-6c2fa.firebaseio.com/products.json",
+        `https://rn-shop-app-6c2fa.firebaseio.com/products.json?auth=${token}`,
         {
           method: "POST",
           "Content-Type": "application/json",
@@ -20,15 +24,16 @@ export const createProduct = (title, imageUrl, description, price) => {
             title,
             description,
             imageUrl,
-            price
+            price,
+            ownerId: userId
           })
         }
       );
+      let responseData = await response.json();
       if (!response.ok) {
         throw new Error("Something went wrong!!!");
       }
 
-      let responseData = await response.json();
 
       dispatch({
         type: CREATE_PRODUCT,
@@ -37,7 +42,8 @@ export const createProduct = (title, imageUrl, description, price) => {
           title,
           description,
           imageUrl,
-          price
+          price,
+          ownerId: userId
         }
       });
     } catch (error) {
@@ -47,10 +53,11 @@ export const createProduct = (title, imageUrl, description, price) => {
 };
 
 export const updateProduct = (id, title, imageUrl, description) => {
-  return async dispatch => {
+  return async (dispatch, getState) => {
+    const token = getState().auth.token
     try {
       const response = await fetch(
-        `https://rn-shop-app-6c2fa.firebaseio.com/products/${id}.json`,
+        `https://rn-shop-app-6c2fa.firebaseio.com/products/${id}.json?auth=${token}`,
         {
           method: "PATCH",
           "Content-Type": "application/json",
@@ -61,11 +68,11 @@ export const updateProduct = (id, title, imageUrl, description) => {
           })
         }
       );
+      let responseData = await response.json();
       if (!response.ok) {
         throw new Error("Something went wrong!!!");
       }
-      let responseData = await response.json();
-      
+
       dispatch({
         type: UPDATE_PRODUCT,
         productId: id,
@@ -82,19 +89,34 @@ export const updateProduct = (id, title, imageUrl, description) => {
 };
 
 export const getProduct = () => {
-  return async dispatch => {
+  return async (dispatch, getState) => {
     const response = await fetch(
       "https://rn-shop-app-6c2fa.firebaseio.com/products.json"
     );
+    let responseData = await response.json();
+
     if (!response.ok) {
       throw new Error("Something went wrong!!!");
     }
 
-    let responseData = await response.json();
+    let loadedProducts = [];
+    for (const key in responseData) {
+      loadedProducts.push(
+        new Product(
+          key,
+          responseData[key].ownerId,
+          responseData[key].title,
+          responseData[key].imageUrl,
+          responseData[key].description,
+          responseData[key].price
+        )
+      );
+    }
 
     dispatch({
       type: SET_PRODUCT,
-      products: responseData
+      availableProducts: loadedProducts,
+      userProducts: loadedProducts.filter(product => product.userId === getState().auth.userId)
     });
   };
 };

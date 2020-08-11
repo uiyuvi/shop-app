@@ -79,7 +79,7 @@ const EditProduct = props => {
     try{
       if (productId) {
         await dispatch(
-          ProductActions.updateProduct(productId, title, description, imageUrl)
+          ProductActions.updateProduct(productId, title, imageUrl, description)
         );
       } else {
         await dispatch(

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, Button, StyleSheet, ActivityIndicator } from "react-native";
+import { View, Text, Button, StyleSheet, ActivityIndicator, Alert } from "react-native";
 import { useSelector, useDispatch } from 'react-redux';
 import { COLORS } from '../constants/colors';
 import { FlatList } from 'react-native-gesture-handler';
@@ -27,8 +27,15 @@ const CartScreen = () => {
     });
     const onOrderHandler = async () => {
         setIsLoading(true);
-        await dispatch(addOrder(tranformedProducts, totalPrice))
-        setIsLoading(false);
+        try {
+            await dispatch(addOrder(tranformedProducts, totalPrice))
+        } catch (error) {
+            Alert.alert("oops", error.message, [
+                { text: "ok" }
+            ]);
+        } finally {
+            setIsLoading(false);
+        }
     }
     return (
         <View style={styles.screen}>

@@ -69,6 +69,7 @@ const Input = props => {
         style={styles.input}
         value={inputState.value}
         onChangeText={text => inputHandler(text)}
+        onEndEditing={onBlurHandler}
         onBlur={onBlurHandler}
       />
       {!inputState.isValid && inputState.touched && (

@@ -1,10 +1,11 @@
 import React, { useState, useReducer, useCallback } from 'react';
-import { View, StyleSheet, KeyboardAvoidingView, Button, Alert } from 'react-native';
+import { View, StyleSheet, KeyboardAvoidingView, Button, Alert, ActivityIndicator } from 'react-native';
 import Card from '../components/Card';
 import Input from '../components/Input';
 import { COLORS } from '../constants/colors';
 import { useDispatch } from 'react-redux';
 import { ScrollView } from 'react-native-gesture-handler';
+import * as AuthActions from '../redux/actions/auth'
 
 const FORM_INPUT_UPDATE = "FORM_INPUT_UPDATE";
 
@@ -35,6 +36,7 @@ const formReducer = (state, action) => {
     return state;
 };
 const HomeScreen = () => {
+    const [isLoading, setIsLoading] = useState(false);
     const [isSignupState, setIsSignupState] = useState(false);
     const [formState, formDispatch] = useReducer(formReducer, {
         inputValues: {
@@ -70,55 +72,61 @@ const HomeScreen = () => {
             return;
         }
         try {
+            setIsLoading(true)
             if (isSignupState) {
-                console.log(username, password);
+                await dispatch(AuthActions.signUp(username, password));
             } else {
-                console.log(username, password);
+                await dispatch(AuthActions.signIn(username, password));
             }
         } catch (error) {
             Alert.alert("oops", error.message, [
                 { text: "ok" }
             ]);
+        } finally {
+            setIsLoading(false)
         }
     }, [dispatch, username, password, isSignupState]);
     return (
         <View style={styles.screen}>
-        <KeyboardAvoidingView behavior="padding" keyboardVerticalOffset={50}>
-            <Card style={styles.authContainer}>
-                <ScrollView>
-                    <View>
-                        <Input
-                            id="username"
-                            label="Username"
-                            keyboardType="default"
-                            email
-                            required
-                            onChangeText={inputHandler}
-                            errorText="Please enter valid username"
-                            initialValue={""}
-                            initiallyValid={false}
-                        />
-                        <Input
-                            id="password"
-                            label="Password"
-                            secureTextEntry
-                            keyboardType="default"
-                            required
-                            onChangeText={inputHandler}
-                            errorText="Please enter valid password"
-                            initialValue={""}
-                            initiallyValid={false}
-                        />
-                        <View style={styles.actionContianer}>
-                            <Button title={isSignupState ? "sign up" : "sign in"} color={COLORS.primary} onPress={submitHandler} />
+            <KeyboardAvoidingView behavior="padding" keyboardVerticalOffset={50}>
+                <Card style={styles.authContainer}>
+                    <ScrollView>
+                        <View>
+                            <Input
+                                id="username"
+                                label="Username"
+                                keyboardType="default"
+                                email
+                                required
+                                onChangeText={inputHandler}
+                                errorText="Please enter valid username"
+                                initialValue={"test@test.com"}
+                                initiallyValid={false}
+                            />
+                            <Input
+                                id="password"
+                                label="Password"
+                                secureTextEntry
+                                keyboardType="default"
+                                required
+                                onChangeText={inputHandler}
+                                errorText="Please enter valid password"
+                                initialValue={"testpassword"}
+                                initiallyValid={false}
+                                minLength={6}
+                            />
+                            <View style={styles.actionContianer}>
+                                {isLoading ? <ActivityIndicator size="small" color={COLORS.primary} /> :
+                                    <Button title={isSignupState ? "sign up" : "sign in"} color={COLORS.primary} onPress={submitHandler} />
+                                }
+                            </View>
+                            <View style={styles.actionContianer}>
+                                <Button title={`Switch to ${isSignupState ? "sign in" : "sign up"}`} color={COLORS.accent} onPress={() => setIsSignupState(prevState => !prevState)} />
+                            </View>
                         </View>
-                        <View style={styles.actionContianer}>
-                            <Button title={`Switch to ${isSignupState ? "sign in" : "sign up"}`} color={COLORS.accent} onPress={() => setIsSignupState(prevState => !prevState)} />
-                        </View>
-                    </View>
-                </ScrollView>
-            </Card>
-        </KeyboardAvoidingView>
+                    </ScrollView>
+                </Card>
+            </KeyboardAvoidingView>
         </View>
     )
 };
