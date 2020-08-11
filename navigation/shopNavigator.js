@@ -1,9 +1,9 @@
 import React, { useReducer } from 'react';
-import { Platform } from 'react-native';
+import { Platform, Button, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import {
-    createDrawerNavigator
+    createDrawerNavigator, DrawerContentScrollView, DrawerItemList, DrawerItem
 } from '@react-navigation/drawer';
 import ProductsOverView from '../screen/ProductsOverviewScreen';
 import { COLORS } from '../constants/colors';
@@ -16,7 +16,9 @@ import { Ionicons } from '@expo/vector-icons';
 import UserProducts from '../screen/UserProductsScreen';
 import EditProduct from '../screen/EditProductScreen';
 import HomeScreen from '../screen/HomeScreen';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { signOut } from '../redux/actions/auth';
 
 const ProductsStack = createStackNavigator();
 const NavigationOptions = {
@@ -86,13 +88,26 @@ const AdminNavigator = () => {
     )
 }
 
+function CustomDrawerContent(props) {
+    const dispatch = useDispatch();
+    return (
+        <DrawerContentScrollView {...props}>
+            <DrawerItemList {...props} />
+            <View style={{ padding: 10 }} >
+                <Button title="Sign out" onPress={() => dispatch(signOut())} color={COLORS.primary} />
+            </View>
+        </DrawerContentScrollView>
+    );
+}
 const Drawer = createDrawerNavigator();
 const ShopAuthenticatedNavigator = () => {
     return (
         <Drawer.Navigator
             drawerContentOptions={{
                 activeTintColor: COLORS.primary
-            }}>
+            }}
+            drawerContent={props => <CustomDrawerContent {...props} />}
+        >
             <Drawer.Screen name="products" component={ProductsNavigator} options={{
                 drawerLabel: 'Products',
                 drawerIcon: ({ focused }) => (
@@ -140,7 +155,7 @@ const ShopNavigator = () => {
                 !isLoggedIn ?
                     (
                         <ShopStack.Navigator screenOptions={NavigationOptions}>
-                            <ShopStack.Screen name="unauthenticated" component={ShopUnAuthenticatedNavigator} options={{title:"Shop"}}/>
+                            <ShopStack.Screen name="unauthenticated" component={ShopUnAuthenticatedNavigator} options={{ title: "Shop" }} />
                         </ShopStack.Navigator>
                     ) : (
                         ShopAuthenticatedNavigator()
