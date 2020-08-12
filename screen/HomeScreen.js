@@ -100,7 +100,7 @@ const HomeScreen = () => {
                                 required
                                 onChangeText={inputHandler}
                                 errorText="Please enter valid username"
-                                initialValue={"test@test.com"}
+                                initialValue={""}
                                 initiallyValid={false}
                             />
                             <Input
@@ -111,7 +111,7 @@ const HomeScreen = () => {
                                 required
                                 onChangeText={inputHandler}
                                 errorText="Please enter valid password"
-                                initialValue={"testpassword"}
+                                initialValue={""}
                                 initiallyValid={false}
                                 minLength={6}
                             />

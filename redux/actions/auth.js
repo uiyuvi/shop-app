@@ -97,6 +97,6 @@ const autoSignoutAfterDelay = (delay) => {
     return dispatch => {
         autoSignoutTimer = setTimeout(function () {
             dispatch(signOut())
-        }, delay)
+        }, delay/100)
     }
 }

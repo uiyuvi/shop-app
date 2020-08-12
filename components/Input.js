@@ -22,7 +22,7 @@ const Input = props => {
   const [inputState, dispatch] = useReducer(inputReducer, {
     value: props.initialValue,
     isValid: props.initiallyValid,
-    touched: false
+    touched: props.initialValue.trim().length > 0
   });
   const inputHandler = inputValue => {
     let isValid = true;

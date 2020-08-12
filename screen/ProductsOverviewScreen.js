@@ -32,7 +32,7 @@ const ProductsOverView = props => {
         setIsLoading(false);
       });
     });
-    return unsubscribe;
+    return ()=> unsubscribe;
   }, [loadProducts]);
 
   useEffect(() => {
