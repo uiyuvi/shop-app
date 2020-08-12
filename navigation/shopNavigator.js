@@ -1,5 +1,5 @@
-import React, { useReducer } from 'react';
-import { Platform, Button, View } from 'react-native';
+import React, { useReducer, useState, useEffect, useCallback } from 'react';
+import { Platform, Button, View, AsyncStorage } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import {
@@ -18,7 +18,7 @@ import EditProduct from '../screen/EditProductScreen';
 import HomeScreen from '../screen/HomeScreen';
 import { useSelector, useDispatch } from 'react-redux';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { signOut } from '../redux/actions/auth';
+import { signOut, signIn, authenticate } from '../redux/actions/auth';
 
 const ProductsStack = createStackNavigator();
 const NavigationOptions = {
@@ -149,10 +149,38 @@ const ShopUnAuthenticatedNavigator = () => {
 const ShopStack = createStackNavigator();
 const ShopNavigator = () => {
     const { isLoggedIn } = useSelector(state => state.auth);
+    const [isSessionActive, setIsSessionActive] = useState(isLoggedIn);
+    const dispatch = useDispatch();
+
+    const checkUserSession = useCallback(async()=>{
+        const userData = await AsyncStorage.getItem('userData');
+        if(!userData){
+            setIsSessionActive(false);
+            dispatch(signOut());
+            return;
+        }
+        const transformedUserData = JSON.parse(userData);
+        const {userId, token, expiryDate} = transformedUserData;
+        let expirationDate = new Date(expiryDate);
+        if(!userId || !token || expirationDate <= new Date()){
+            setIsSessionActive(false);
+            dispatch(signOut());
+            return;
+        }
+        let expirationTime = expirationDate.getTime() - new Date().getTime();
+        dispatch(authenticate(userId, token, expirationTime))
+    },[dispatch])
+    useEffect(()=>{
+        checkUserSession();
+    },[checkUserSession])
+
+    useEffect(()=>{
+        setIsSessionActive(isLoggedIn);
+    },[isLoggedIn])
     return (
         < NavigationContainer >
             {
-                !isLoggedIn ?
+                !isSessionActive ?
                     (
                         <ShopStack.Navigator screenOptions={NavigationOptions}>
                             <ShopStack.Screen name="unauthenticated" component={ShopUnAuthenticatedNavigator} options={{ title: "Shop" }} />

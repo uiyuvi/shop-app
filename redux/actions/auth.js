@@ -1,10 +1,19 @@
+import { AsyncStorage } from "react-native";
+
 export const SIGN_UP = "SIGN_UP";
 export const SIGN_IN = "SIGN_IN";
 export const SIGN_OUT = "SIGN_OUT";
+let autoSignoutTimer;
 
-export const signOut = () => ({
-    type: SIGN_OUT
-})
+export const signOut = () => {
+    return async dispatch => {
+        clearTimeout(autoSignoutTimer);
+        AsyncStorage.removeItem('userData')
+        dispatch({
+            type: SIGN_OUT
+        })
+    }
+}
 
 export const signUp = (username, password) => {
     return async dispatch => {
@@ -62,10 +71,32 @@ export const signIn = (username, password) => {
             }
             throw new Error(errorMessage);
         }
-        dispatch({ 
-            type: SIGN_IN,
-            userId: responseData.localId,
-            token: responseData.idToken
-         })
+        let expirationDate = new Date(new Date().getTime() + parseInt(responseData.expiresIn) * 1000);
+        storeUserData(responseData.localId, responseData.idToken, expirationDate);
+        dispatch(authenticate(responseData.localId, responseData.idToken, expirationDate))
+        dispatch(autoSignoutAfterDelay(parseInt(responseData.expiresIn) * 1000));
+    }
+}
+
+export const authenticate = (userId, token, expirationDate) => ({
+    type: SIGN_IN,
+    userId: userId,
+    token: token,
+    expirationDate: expirationDate
+})
+
+const storeUserData = (userId, token, expirationDate) => {
+    AsyncStorage.setItem('userData', JSON.stringify({
+        userId: userId,
+        token: token,
+        expiryDate: expirationDate.toISOString()
+    }))
+}
+
+const autoSignoutAfterDelay = (delay) => {
+    return dispatch => {
+        autoSignoutTimer = setTimeout(function () {
+            dispatch(signOut())
+        }, delay)
     }
 }
