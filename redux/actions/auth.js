@@ -42,6 +42,7 @@ export const signUp = (username, password) => {
             throw new Error(errorMessage);
         }
         dispatch({ type: SIGN_UP })
+        return responseData;
     }
 };
 

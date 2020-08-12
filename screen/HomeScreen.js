@@ -74,7 +74,13 @@ const HomeScreen = () => {
         try {
             setIsLoading(true)
             if (isSignupState) {
-                await dispatch(AuthActions.signUp(username, password));
+                const response = await dispatch(AuthActions.signUp(username, password));
+                if(response.idToken){
+                    Alert.alert("Success", "You can login with these details now!", [
+                        { text: "ok" }
+                    ]);
+                };
+                setIsSignupState(false);
             } else {
                 await dispatch(AuthActions.signIn(username, password));
             }
